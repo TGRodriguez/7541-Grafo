@@ -5,6 +5,10 @@ import random
 
 D = 0.85
 K = 20
+ROJO = '\033[91m'
+VERDE = '\033[92m'
+AMARILLO = '\033[93m'
+BLANCO = '\033[0m'
 
 # -------------------------------------------------------------------- #
 #                       COEFICIENTE DE CLUSTERING                      #
@@ -85,6 +89,53 @@ def bfs(grafo, origen, destino):
             q.appendleft(w)
     return padre, orden
 
+# --------------------------------------------------------------------- #
+#                            CAMINOS MINIMOS                            #
+# --------------------------------------------------------------------- #
+
+def camino_minimo_dijkstra(grafo, origen):
+    '''Algoritmo de dijkstra para encontrar los caminos minimos de un vertice de origen a todos los demas
+    Utiliza un heap a los que se le encolan tuplas cuyos primeros elementos son la prioridad en el heap'''
+    distancia = {}
+    padre = {}
+    for v in grafo:
+        distancia[v] = float('inf')
+    distancia[origen] = 0
+    padre[origen] = None
+    heap = []
+    heapq.heappush(heap, (distancia[origen], origen))
+    while (heap):
+        v = heapq.heappop(heap)[1]
+        for w in grafo.adyacentes(v):
+            if distancia[v] + grafo.peso(v, w) < distancia[w]:
+                distancia[w] = distancia[v] + grafo.peso(v, w)
+                padre[w] = v
+                heapq.heappush(heap, (distancia[w], w))
+    return padre, distancia
+
+
+
+def camino_minimo_bellman_ford(grafo, origen):
+    distancia = {}
+    padre = {}
+    for v in grafo:
+        distancia[v] = float('inf')
+    distancia[origen] = 0
+    padre[origen] = None
+    aristas = grafo.obtener_aristas()
+    print(ROJO + f"Aristas: {aristas}" + BLANCO)
+    for i in range((len(grafo))):
+        for v, w, peso in aristas:
+            if distancia[v] + peso < distancia[w]:
+                padre[w] = v
+                distancia[w] = distancia[v] + peso
+
+    for v,w, peso in aristas:
+        if distancia[v] + peso < distancia[w]:
+            return None
+
+    return padre, distancia
+    
 
 # --------------------------------------------------------------------- #
 #                 ORDEN TOPOLÓGICO CON DFS Y BFS                        #

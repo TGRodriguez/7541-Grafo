@@ -24,6 +24,19 @@ class Grafo:
             return True
         return False
 
+    def obtener_aristas(self):
+        ''' Devuelve una lista con las aristas como una tupla con los vertices y el peso'''
+        aristas = set()
+        for v in self.vertices:
+            for w in self.adyacentes(v):
+                if self.dirigido or (w, v, self.peso(v, w)) not in aristas:
+                    aristas.add((v, w, self.peso(v, w)))
+        return list(aristas)
+            
+        
+
+    
+    
 
     def borrar_vertice(self, clave):
         ''' Borra un vértice del grafo, devuelve True si se pudo borrar, es decir, si existía el vértice
